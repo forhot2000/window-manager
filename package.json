@@ -1,15 +1,19 @@
 {
   "name": "window-manager",
+  "private": true,
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
-  "keywords": [],
-  "author": "",
   "license": "ISC",
+  "type": "module",
   "scripts": {
-    "start": "node index.js"
+    "start": "node src/index.js",
+    "build": "tsc && vite build",
+    "preview": "vite preview"
   },
-  "dependencies": {
-    "serve-handler": "^6.1.5"
+  "devDependencies": {
+    "@types/node": "^20.10.4",
+    "glob": "^10.3.10",
+    "http-proxy": "^1.18.1",
+    "typescript": "^5.2.2",
+    "vite": "^5.0.7"
   }
 }

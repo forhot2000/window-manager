@@ -56,7 +56,7 @@
 
       <!-- windows begin -->
       <div class="wd-panel-container">
-        <div id="tab1" class="wd-panel" data-role="window-panel">
+        <div id="tab1" class="wd-panel active" data-role="window-panel">
           <iframe src="/page1.html" frameborder="0"></iframe>
         </div>
         <div id="tab2" class="wd-panel" data-role="window-panel">
@@ -72,12 +72,6 @@
       <!-- windows end -->
     </div>
 
-    <script src="/js/bridge.js"></script>
-    <script>
-      (function () {
-        const windowManager = new WindowManager();
-        const bridge = new Bridge({ windowManager });
-      })();
-    </script>
+    <script type="module" src="/src/entry/main.ts"></script>
   </body>
 </html>
