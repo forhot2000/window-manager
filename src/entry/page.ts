@@ -1,7 +1,7 @@
 import { Framework } from "../lib/Framework";
 
 const framework = new Framework({
-  targetOrigin: "http://localhost:3000",
+  targetOrigin: "*",
 });
 
 const btn_send = document.getElementById("btn_send");
