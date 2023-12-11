@@ -1,5 +1,5 @@
-import { Bridge, HandlerOpts } from "./bridge";
-import { HTMLWindow } from "./types";
+import { Bridge } from "./bridge";
+import { HandlerOpts } from "./handler.interfaces";
 import {
   clamp,
   createElement,
@@ -8,6 +8,7 @@ import {
   isLinkElement,
 } from "./util";
 import { Window } from "./window";
+import { HTMLWindow } from "./window.interfaces";
 
 export class WindowManager {
   private windows: Map<string, Window>;

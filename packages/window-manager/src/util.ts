@@ -1,4 +1,4 @@
-import { HTMLWindow } from "./types";
+import { HTMLWindow } from "./window.interfaces";
 
 export function hasClass(element: HTMLElement, className: string) {
   const _className = element.className.trim();

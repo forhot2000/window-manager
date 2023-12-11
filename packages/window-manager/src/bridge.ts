@@ -1,8 +1,4 @@
-export type Handler = (args: any, source: MessageEventSource) => void;
-
-export type HandlerOpts = {
-  [k: string]: Handler;
-};
+import { HandlerOpts } from "./handler.interfaces";
 
 export class Bridge {
   private handlers: HandlerOpts;
