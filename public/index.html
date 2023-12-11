@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>window manager</title>
+    <link rel="stylesheet" href="/style.css" />
+  </head>
+  <body>
+    <div class="side-left">
+      <ul>
+        <li><a href="/page1.html" data-tab="tab1">page 1</a></li>
+        <li><a href="/page2.html" data-tab="tab2">page 2</a></li>
+        <li>
+          <a
+            href="http://localhost:3001/page3.html"
+            data-tab="tab3"
+            data-title="page 3"
+            >page 3 (External)</a
+          >
+        </li>
+      </ul>
+    </div>
+
+    <div class="wd-container">
+      <div class="wd-container-top">
+        <!-- tabs begin -->
+        <div class="wd-tab-container">
+          <div
+            class="wd-tab active"
+            data-tab="tab1"
+            data-role="window-tab"
+            data-fixed="true"
+          >
+            <span>page 1</span>
+            <!-- <span class="close" title="close this window">X</span> -->
+          </div>
+          <div class="wd-tab" data-tab="tab2" data-role="window-tab">
+            <span>page 2</span>
+            <span class="close" title="close this window">X</span>
+          </div>
+          <div class="wd-tab" data-tab="tab3" data-role="window-tab">
+            <span>page 3</span>
+            <span class="close" title="close this window">X</span>
+          </div>
+        </div>
+        <!-- tabs end -->
+
+        <!-- close all windows -->
+        <div class="wd-container-top-attachs">
+          <span id="close_all_tabs" class="close" title="close all windows"
+            >XX</span
+          >
+        </div>
+      </div>
+
+      <!-- windows begin -->
+      <div class="wd-panel-container">
+        <div id="tab1" class="wd-panel" data-role="window-panel">
+          <iframe src="/page1.html" frameborder="0"></iframe>
+        </div>
+        <div id="tab2" class="wd-panel" data-role="window-panel">
+          <iframe src="/page2.html" frameborder="0"></iframe>
+        </div>
+        <div id="tab3" class="wd-panel" data-role="window-panel">
+          <iframe
+            src="http://localhost:3001/page3.html"
+            frameborder="0"
+          ></iframe>
+        </div>
+      </div>
+      <!-- windows end -->
+    </div>
+
+    <script src="/js/bridge.js"></script>
+    <script>
+      (function () {
+        const windowManager = new WindowManager();
+        const bridge = new Bridge({ windowManager });
+      })();
+    </script>
+  </body>
+</html>

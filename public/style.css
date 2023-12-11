@@ -1,0 +1,103 @@
+* {
+  margin: 0;
+}
+
+body {
+  display: flex;
+  flex-direction: row;
+  height: 100vh;
+}
+
+.side-left {
+  width: 200px;
+  margin-top: 50px;
+}
+
+.wd-container {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.wd-container-top {
+  display: flex;
+  flex-direction: row;
+  margin: 10px 10px 0 10px;
+}
+
+.wd-container-top-attachs {
+  display: inline-block;
+  padding: 5px;
+}
+
+.wd-tab-container {
+  display: inline-flex;
+  flex-direction: row;
+}
+
+.wd-tab {
+  border: 1px solid black;
+  display: inline-block;
+  padding: 5px;
+  cursor: pointer;
+  user-select: none;
+}
+
+.wd-tab.active {
+  border-bottom: none;
+}
+
+.close {
+  width: 20px;
+  display: inline-block;
+  text-align: center;
+  cursor: pointer;
+  user-select: none;
+}
+
+.wd-panel-container {
+  position: relative;
+  flex: 1;
+}
+
+.wd-panel {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  z-index: 0;
+}
+
+.wd-panel.active {
+  z-index: 100;
+}
+
+/* debug tab colos */
+
+.wd-tab[data-tab="tab1"],
+#tab1 {
+  background-color: rgb(159, 225, 171);
+}
+
+.wd-tab[data-tab="tab1"].active {
+  border-bottom: 1px solid rgb(159, 225, 171);
+}
+
+.wd-tab[data-tab="tab2"],
+#tab2 {
+  background-color: rgb(230, 205, 105);
+}
+
+.wd-tab[data-tab="tab2"].active {
+  border-bottom: 1px solid rgb(230, 205, 105);
+}
+
+.wd-tab[data-tab="tab3"],
+#tab3 {
+  background-color: rgb(187, 128, 177);
+}
+
+.wd-tab[data-tab="tab3"].active {
+  border-bottom: 1px solid rgb(187, 128, 177);
+}
