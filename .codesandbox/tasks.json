@@ -11,7 +11,7 @@
   "tasks": {
     "start": {
       "name": "start",
-      "command": "pnpm start",
+      "command": "pnpm run -C samples/demo start",
       "runAtStart": true,
       "preview": {
         "port": 3000
@@ -19,11 +19,11 @@
     },
     "build": {
       "name": "build",
-      "command": "pnpm build"
+      "command": "pnpm -r build"
     },
     "preview": {
       "name": "preview",
-      "command": "pnpm preview"
+      "command": "pnpm run -C samples/demo preview"
     }
   }
 }
