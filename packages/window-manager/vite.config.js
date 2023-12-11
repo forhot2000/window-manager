@@ -10,5 +10,5 @@ export default defineConfig({
       fileName: "window-manager",
     },
   },
-  plugins: [dts()],
+  plugins: [dts({ rollupTypes: true })],
 });

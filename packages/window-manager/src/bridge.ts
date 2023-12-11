@@ -5,11 +5,15 @@ export type HandlerOpts = {
 };
 
 export class Bridge {
-  handlers: HandlerOpts;
+  private handlers: HandlerOpts;
 
   constructor(handlers: HandlerOpts) {
     this.handlers = handlers;
     window.addEventListener("message", this.onMessage.bind(this));
+  }
+
+  registerHandlers(handlers: HandlerOpts) {
+    Object.assign(this.handlers, handlers);
   }
 
   onMessage({ data, origin, source }: MessageEvent) {

@@ -10,5 +10,5 @@ export default defineConfig({
       fileName: "framework",
     },
   },
-  plugins: [dts()],
+  plugins: [dts({ rollupTypes: true })],
 });

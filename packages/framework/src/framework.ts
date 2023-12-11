@@ -15,8 +15,8 @@ function defer() {
 export class Framework {
   parent!: Window;
   targetOrigin?: string;
-  callbacks!: { [k: string]: (err: any, result: any) => void };
   windowId!: string;
+  private callbacks!: { [k: string]: (err: any, result: any) => void };
 
   constructor(opts?: { targetOrigin?: string }) {
     const parent = window.parent;
@@ -51,7 +51,7 @@ export class Framework {
     return deferred.promise;
   }
 
-  onMessage({ data }: MessageEvent) {
+  private onMessage({ data }: MessageEvent) {
     // console.log("page1 received:", data);
     const { id, result, error } = data;
     if (id) {

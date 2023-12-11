@@ -10,16 +10,15 @@ import {
 import { Window } from "./window";
 
 export class WindowManager {
-  windows: Map<string, Window>;
-  activeWindowId: string | null;
-  tabContainer!: HTMLElement;
-  windowContainer!: HTMLElement;
-  closeAllButton!: HTMLElement;
-  bridge: Bridge;
+  private windows: Map<string, Window>;
+  private activeWindowId?: string;
+  private tabContainer!: HTMLElement;
+  private windowContainer!: HTMLElement;
+  private closeAllButton!: HTMLElement;
+  private bridge: Bridge;
 
   constructor() {
     this.windows = new Map();
-    this.activeWindowId = null;
 
     document.addEventListener("click", this.onClick.bind(this));
 
@@ -46,11 +45,11 @@ export class WindowManager {
     });
   }
 
-  getWindow(id: string) {
+  private getWindow(id: string) {
     return this.windows.get(id);
   }
 
-  getWindowAt(index: number) {
+  private getWindowAt(index: number) {
     let i = 0;
     for (const _window of this.windows.values()) {
       if (i === index) {
@@ -58,14 +57,14 @@ export class WindowManager {
       }
       i++;
     }
-    return null;
+    return undefined;
   }
 
   listWindows() {
     return Array.from(this.windows.keys());
   }
 
-  findIndex(id: any) {
+  private findIndex(id: string) {
     let i = 0;
     for (const key of this.windows.keys()) {
       if (key === id) {
@@ -76,16 +75,16 @@ export class WindowManager {
     return -1;
   }
 
-  findWindowByFrame(frame: any) {
+  private findWindowByFrame(frame: HTMLElement) {
     for (const _window of this.windows.values()) {
       if (_window.frame === frame) {
         return _window;
       }
     }
-    return null;
+    return undefined;
   }
 
-  createWindow(opts: { id: string; title: string; href: string }) {
+  private createWindow(opts: { id: string; title: string; href: string }) {
     const { id, title, href } = opts;
 
     const tab = createElement(`
@@ -154,7 +153,7 @@ export class WindowManager {
     }
   }
 
-  loadWindows() {
+  private loadWindows() {
     const tabs = this.tabContainer.querySelectorAll<HTMLElement>(
       '[data-role="window-tab"]'
     );
@@ -212,9 +211,9 @@ export class WindowManager {
     // console.log(this.windows);
   }
 
-  registerWindow(child: HTMLWindow) {
+  private registerWindow(child: HTMLWindow) {
     // console.log("register window: %s %O", id, window);
-    const frame = findFrame(child);
+    const frame = findFrame(child)!;
     let _window = this.findWindowByFrame(frame);
     if (!_window) {
       throw new Error("window not found.");
@@ -239,7 +238,7 @@ export class WindowManager {
     this.focusWindow(_window);
   }
 
-  focusWindow(_window: Window) {
+  private focusWindow(_window: Window) {
     const lastWindow = this.getActiveWindow();
     if (lastWindow) {
       lastWindow.blur();
@@ -248,11 +247,13 @@ export class WindowManager {
     this.activeWindowId = _window.id;
   }
 
-  getActiveWindow() {
-    return this.activeWindowId ? this.getWindow(this.activeWindowId) : null;
+  private getActiveWindow() {
+    return this.activeWindowId
+      ? this.getWindow(this.activeWindowId)
+      : undefined;
   }
 
-  onClick(e: MouseEvent) {
+  private onClick(e: MouseEvent) {
     const target = e.target as HTMLElement;
     if (isLinkElement(target)) {
       const id = target.getAttribute("data-tab");
@@ -266,7 +267,7 @@ export class WindowManager {
     }
   }
 
-  openWindow(href: string, opts: { id: string; title: string }) {
+  private openWindow(href: string, opts: { id: string; title: string }) {
     const { id, title } = opts;
     console.log(`open '${href}' in window '${id}'`);
     const _window = this.getWindow(id);
@@ -277,6 +278,6 @@ export class WindowManager {
   }
 
   registerHandlers(handlers: HandlerOpts) {
-    Object.assign(this.bridge.handlers, handlers);
+    this.bridge.registerHandlers(handlers);
   }
 }
