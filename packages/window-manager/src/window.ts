@@ -1,5 +1,4 @@
-import { addClass } from "../util/addClass";
-import { removeClass } from "../util/removeClass";
+import { addClass, removeClass } from "./util";
 
 export class Window {
   id!: string;

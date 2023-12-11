@@ -1,5 +1,4 @@
 import { glob } from "glob";
-import { resolve } from "path";
 import { defineConfig } from "vite";
 
 const input = Object.fromEntries(
@@ -14,11 +13,6 @@ export default defineConfig({
     port: 3000,
   },
   build: {
-    // lib: {
-    //   entry: resolve(__dirname, "src/lib/Framework.ts"),
-    //   name: "Framework",
-    //   fileName: "framework",
-    // },
     rollupOptions: {
       input: input,
     },

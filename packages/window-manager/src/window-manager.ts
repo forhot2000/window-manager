@@ -1,10 +1,13 @@
-import { Window } from "./Window";
-import { clamp } from "../util/clamp";
-import { createElement } from "../util/createElement";
-import { findFrame } from "../util/findFrame";
-import { hasClass } from "../util/hasClass";
-import { HTMLWindow } from "../util/interfaces";
-import { isLinkElement } from "../util/isLinkElement";
+import { Bridge, HandlerOpts } from "./bridge";
+import { HTMLWindow } from "./types";
+import {
+  clamp,
+  createElement,
+  findFrame,
+  hasClass,
+  isLinkElement,
+} from "./util";
+import { Window } from "./window";
 
 export class WindowManager {
   windows: Map<string, Window>;
@@ -12,6 +15,7 @@ export class WindowManager {
   tabContainer!: HTMLElement;
   windowContainer!: HTMLElement;
   closeAllButton!: HTMLElement;
+  bridge: Bridge;
 
   constructor() {
     this.windows = new Map();
@@ -34,6 +38,12 @@ export class WindowManager {
     if (!this.activeWindowId && this.windows.size > 0) {
       this.focusAt(0);
     }
+
+    this.bridge = new Bridge({
+      registerWindow: (_, child) => this.registerWindow(child as HTMLWindow),
+      listWindows: () => this.listWindows(),
+      closeWindow: (id) => this.closeWindow(id),
+    });
   }
 
   getWindow(id: string) {
@@ -199,7 +209,7 @@ export class WindowManager {
         _window.blur();
       }
     });
-    console.log(this.windows);
+    // console.log(this.windows);
   }
 
   registerWindow(child: HTMLWindow) {
@@ -264,5 +274,9 @@ export class WindowManager {
       this.windows.set(id, this.createWindow({ id, title, href }));
     }
     this.focus(id);
+  }
+
+  registerHandlers(handlers: HandlerOpts) {
+    Object.assign(this.bridge.handlers, handlers);
   }
 }

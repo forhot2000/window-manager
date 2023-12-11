@@ -1,13 +1,19 @@
-import { defer } from "../util/defer";
-import { HTMLWindow } from "../util/interfaces";
-
 let messageId = 1;
 function nextMessageId() {
   return "m" + messageId++;
 }
 
+function defer() {
+  let deferred = {} as any;
+  deferred.promise = new Promise((resolve, reject) => {
+    deferred.resolve = resolve;
+    deferred.reject = reject;
+  });
+  return deferred;
+}
+
 export class Framework {
-  parent!: HTMLWindow;
+  parent!: Window;
   targetOrigin?: string;
   callbacks!: { [k: string]: (err: any, result: any) => void };
   windowId!: string;

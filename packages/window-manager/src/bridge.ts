@@ -1,19 +1,14 @@
-import type { WindowManager } from "./WindowManager";
-import type { HTMLWindow } from "../util/interfaces";
+export type Handler = (args: any, source: MessageEventSource) => void;
+
+export type HandlerOpts = {
+  [k: string]: Handler;
+};
 
 export class Bridge {
-  windowManager!: WindowManager;
-  handlers: { [k: string]: (args: any, source: MessageEventSource) => void };
+  handlers: HandlerOpts;
 
-  constructor({ windowManager }: { windowManager: WindowManager }) {
-    this.windowManager = windowManager;
-    this.handlers = {
-      registerWindow: (_, child) =>
-        this.windowManager.registerWindow(child as HTMLWindow),
-      listWindows: () => this.windowManager.listWindows(),
-      closeWindow: (id) => this.windowManager.closeWindow(id),
-    };
-
+  constructor(handlers: HandlerOpts) {
+    this.handlers = handlers;
     window.addEventListener("message", this.onMessage.bind(this));
   }
 

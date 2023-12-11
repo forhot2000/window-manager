@@ -1,0 +1,17 @@
+{
+  "name": "window-manager",
+  "private": true,
+  "version": "0.0.1",
+  "main": "dist/window-manager.js",
+  "types": "dist/index.d.ts",
+  "typings": "dist/index.d.ts",
+  "type": "module",
+  "scripts": {
+    "build": "tsc && vite build"
+  },
+  "devDependencies": {
+    "typescript": "^5.2.2",
+    "vite": "^5.0.0",
+    "vite-plugin-dts": "^3.6.4"
+  }
+}
