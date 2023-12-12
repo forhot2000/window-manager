@@ -23,8 +23,8 @@ export class WindowManager {
 
     document.addEventListener("click", this.onClick.bind(this));
 
-    this.tabContainer = document.querySelector(".wd-tab-container")!;
-    this.windowContainer = document.querySelector(".wd-panel-container")!;
+    this.tabContainer = document.querySelector(".window-tab-container")!;
+    this.windowContainer = document.querySelector(".window-panel-container")!;
     this.closeAllButton = document.getElementById("close_all_tabs")!;
 
     this.loadWindows();
@@ -40,9 +40,9 @@ export class WindowManager {
     }
 
     this.bridge = new Bridge({
-      registerWindow: (_, child) => this.registerWindow(child as HTMLWindow),
-      listWindows: () => this.listWindows(),
-      closeWindow: (id) => this.closeWindow(id),
+        registerWindow: (_, child) => this.registerWindow(child as HTMLWindow),
+        listWindows: () => this.listWindows(),
+        closeWindow: (id) => this.closeWindow(id),
     });
   }
 
@@ -89,14 +89,14 @@ export class WindowManager {
     const { id, title, href } = opts;
 
     const tab = createElement(`
-        <div class="wd-tab" data-tab="${id}" data-role="window-tab">
+        <div class="window-tab" data-tab="${id}" data-role="window-tab">
           <span>${title}</span>
           <span class="close" title="close this window">X</span>
         </div>`);
     this.tabContainer!.appendChild(tab);
 
     const panel = createElement(`
-        <div id="${id}" class="wd-panel" data-role="window-panel">
+        <div id="${id}" class="window-panel" data-role="window-panel">
           <iframe src="${href}" frameborder="0"></iframe>
         </div>`);
     this.windowContainer!.appendChild(panel);

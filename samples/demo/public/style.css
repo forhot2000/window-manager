@@ -13,29 +13,29 @@ body {
   margin-top: 50px;
 }
 
-.wd-container {
+.window-container {
   display: flex;
   flex-direction: column;
   flex: 1;
 }
 
-.wd-container-top {
+.window-container-top {
   display: flex;
   flex-direction: row;
   margin: 10px 10px 0 10px;
 }
 
-.wd-container-top-attachs {
+.window-container-top-attachs {
   display: inline-block;
   padding: 5px;
 }
 
-.wd-tab-container {
+.window-tab-container {
   display: inline-flex;
   flex-direction: row;
 }
 
-.wd-tab {
+.window-tab {
   border: 1px solid black;
   display: inline-block;
   padding: 5px;
@@ -43,7 +43,7 @@ body {
   user-select: none;
 }
 
-.wd-tab.active {
+.window-tab.active {
   border-bottom: none;
 }
 
@@ -55,12 +55,12 @@ body {
   user-select: none;
 }
 
-.wd-panel-container {
+.window-panel-container {
   position: relative;
   flex: 1;
 }
 
-.wd-panel {
+.window-panel {
   position: absolute;
   left: 0;
   right: 0;
@@ -69,35 +69,35 @@ body {
   z-index: 0;
 }
 
-.wd-panel.active {
+.window-panel.active {
   z-index: 100;
 }
 
 /* debug tab colos */
 
-.wd-tab[data-tab="tab1"],
+.window-tab[data-tab="tab1"],
 #tab1 {
   background-color: rgb(159, 225, 171);
 }
 
-.wd-tab[data-tab="tab1"].active {
+.window-tab[data-tab="tab1"].active {
   border-bottom: 1px solid rgb(159, 225, 171);
 }
 
-.wd-tab[data-tab="tab2"],
+.window-tab[data-tab="tab2"],
 #tab2 {
   background-color: rgb(230, 205, 105);
 }
 
-.wd-tab[data-tab="tab2"].active {
+.window-tab[data-tab="tab2"].active {
   border-bottom: 1px solid rgb(230, 205, 105);
 }
 
-.wd-tab[data-tab="tab3"],
+.window-tab[data-tab="tab3"],
 #tab3 {
   background-color: rgb(187, 128, 177);
 }
 
-.wd-tab[data-tab="tab3"].active {
+.window-tab[data-tab="tab3"].active {
   border-bottom: 1px solid rgb(187, 128, 177);
 }
