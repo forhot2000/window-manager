@@ -3,14 +3,50 @@ function nextMessageId() {
   return "m" + messageId++;
 }
 
-function defer() {
+function defer<T>(): {
+  resolve(data: T): void;
+  reject(error?: any): void;
+  promise: Promise<T>;
+} {
   let deferred = {} as any;
-  deferred.promise = new Promise((resolve, reject) => {
+  deferred.promise = new Promise<T>((resolve, reject) => {
     deferred.resolve = resolve;
     deferred.reject = reject;
   });
   return deferred;
 }
+
+function tap<T>(
+  promise: Promise<T>,
+  fn: (err: any, data?: T) => void
+): Promise<T> {
+  const { resolve, reject, promise: tapPromise } = defer<T>();
+  promise.then(
+    (data) => {
+      fn(undefined, data);
+      resolve(data);
+    },
+    (err) => {
+      fn(err, undefined);
+      reject(err);
+    }
+  );
+  return tapPromise;
+}
+
+function timeout<T>(promise: Promise<T>, ms: number): Promise<T> {
+  const { resolve, reject, promise: timeoutPromise } = defer<T>();
+  const token = setTimeout(() => {
+    // console.log("promise timeout");
+    reject(new Error("timeout!"));
+  }, ms);
+  tap(promise, () => {
+    clearTimeout(token);
+  }).then(resolve, reject);
+  return timeoutPromise;
+}
+
+const type = "window-manager";
 
 export class Framework {
   parent!: Window;
@@ -35,7 +71,7 @@ export class Framework {
   }
 
   async sendMessage(message: any) {
-    const deferred = defer();
+    const deferred = defer<any>();
     const id = nextMessageId();
     this.callbacks[id] = (err, result) => {
       if (err) {
@@ -45,10 +81,13 @@ export class Framework {
       }
     };
     this.parent.postMessage(
-      { ...message, id },
+      { ...message, id, type },
       { targetOrigin: this.targetOrigin }
     );
-    return deferred.promise;
+    return tap(timeout(deferred.promise, 1000), () => {
+      delete this.callbacks[id];
+      // console.log(this.callbacks);
+    });
   }
 
   private onMessage({ data }: MessageEvent) {
@@ -62,7 +101,6 @@ export class Framework {
         } else {
           callback(undefined, result);
         }
-        delete this.callbacks[id];
       }
     }
   }
@@ -78,6 +116,10 @@ export class Framework {
   }
 
   async closeWindow() {
+    if (!this.windowId) {
+      console.error("window not registered!");
+      return;
+    }
     try {
       await this.sendMessage({ command: "closeWindow", args: this.windowId });
     } catch (err) {

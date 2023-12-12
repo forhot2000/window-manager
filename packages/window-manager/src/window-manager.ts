@@ -40,9 +40,12 @@ export class WindowManager {
     }
 
     this.bridge = new Bridge({
+      type: "window-manager",
+      handlers: {
         registerWindow: (_, child) => this.registerWindow(child as HTMLWindow),
         listWindows: () => this.listWindows(),
         closeWindow: (id) => this.closeWindow(id),
+      },
     });
   }
 

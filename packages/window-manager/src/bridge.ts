@@ -1,9 +1,24 @@
 import { HandlerOpts } from "./handler.interfaces";
 
+interface MessageData {
+  type: string;
+  id: string;
+  command: string;
+  args: any;
+}
+
+function isMessageData(data: any): data is MessageData {
+  const { type, id, command } = data;
+  return type && id && command;
+}
+
 export class Bridge {
+  private type: string;
   private handlers: HandlerOpts;
 
-  constructor(handlers: HandlerOpts) {
+  constructor(opts: { type: string; handlers: HandlerOpts }) {
+    const { type, handlers } = opts;
+    this.type = type;
     this.handlers = handlers;
     window.addEventListener("message", this.onMessage.bind(this));
   }
@@ -14,8 +29,11 @@ export class Bridge {
 
   onMessage({ data, origin, source }: MessageEvent) {
     // console.log("parent received: %O %O %O", data, origin, source);
-    const { id, command, args } = data;
-    if (!id || !command) {
+    if (!isMessageData(data)) {
+      return;
+    }
+    const { type, id, command, args } = data;
+    if (type !== this.type) {
       return;
     }
     const handler = this.handlers[command];
