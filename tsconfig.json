@@ -3,15 +3,16 @@
     "strict": true,
     "module": "commonjs",
     "target": "es2015",
+    "emitDeclarationOnly": true,
+    "declaration": true,
+    "declarationDir": "dist/",
     "jsx": "preserve",
     "esModuleInterop": true,
     "sourceMap": true,
     "allowJs": true,
-    "lib": [
-      "es6",
-      "dom"
-    ],
-    "rootDir": "src",
+    "lib": ["es6", "dom"],
     "moduleResolution": "node"
-  }
+  },
+  "include": ["src/**/*.ts", "server/**/*.ts"],
+  "exclude": ["node_modules", "dist"]
 }

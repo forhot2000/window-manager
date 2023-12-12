@@ -1,6 +1,6 @@
 import express, { RequestHandler } from "express";
 import httpProxy from "http-proxy";
-import Bundler from "parcel-bundler";
+import { createServer as createViteServer } from "vite";
 
 const MIME = { javascript: "application/javascript" };
 
@@ -32,23 +32,21 @@ async function createServer() {
 
   app.use(express.static("public"));
 
-  const bundler = setupBundler();
-
-  // Let express use the bundler middleware, this will let Parcel handle every request over your express server
-  app.use(bundler.middleware());
+  const vite = await setupVite();
+  app.use(vite.middlewares);
 
   app.listen(3000, function () {
     console.log("app listen on http://localhost:3000");
   });
 }
 
-function setupBundler() {
-  const file = "index.html"; // Pass an absolute path to the entrypoint here
-  const options = {}; // See options section of api docs, for the possibilities
-
-  // Initialize a new bundler using a file and options
-  const bundler = new Bundler(file, options);
-  return bundler;
+async function setupVite() {
+  return await createViteServer({
+    configFile: "vite.config.js",
+    server: {
+      middlewareMode: true,
+    },
+  });
 }
 
 const testJs = slowRequest(function (req, res) {
