@@ -1,4 +1,4 @@
-import { Framework } from "framework";
+import { Framework } from "./framework";
 
 const framework = new Framework({
   targetOrigin: "*",

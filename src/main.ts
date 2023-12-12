@@ -1,4 +1,4 @@
-import { WindowManager } from "window-manager";
+import { WindowManager } from "./window-manager";
 
 const windowManager = new WindowManager();
 

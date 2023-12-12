@@ -359,9 +359,11 @@ function createElement(html: string) {
 function findFrame(childWindow: HTMLWindow) {
   let frame;
   const frames = document.querySelectorAll("iframe");
-  for (const _frame of frames) {
+  for (let i = 0; i < frames.length; i++) {
+    const _frame = frames[i];
     if (_frame.contentWindow === childWindow) {
       frame = _frame;
+      break;
     }
   }
   return frame;
