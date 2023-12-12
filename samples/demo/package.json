@@ -5,7 +5,7 @@
   "license": "ISC",
   "type": "module",
   "scripts": {
-    "start": "node src/index.js",
+    "start": "node server/index.js",
     "build": "tsc && vite build",
     "preview": "vite preview",
     "clear": "rimraf dist"
