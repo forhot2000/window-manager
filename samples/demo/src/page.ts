@@ -9,7 +9,7 @@ if (btn_send) {
   btn_send.addEventListener("click", async function () {
     try {
       const windows = await framework.listWindows();
-      console.log("all windows: %O", windows);
+      console.log("all windows: %s", windows);
     } catch (err) {
       console.error(err);
     }

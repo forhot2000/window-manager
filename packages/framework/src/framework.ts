@@ -48,6 +48,22 @@ function timeout<T>(promise: Promise<T>, ms: number): Promise<T> {
 
 const type = "window-manager";
 
+export interface MessageData {
+  command: string;
+  args?: any;
+}
+
+interface PostMessageData extends MessageData {
+  type: string;
+  id: string;
+}
+
+interface PostMessageResult {
+  id: string;
+  result: any;
+  error: any;
+}
+
 export class Framework {
   parent!: Window;
   targetOrigin?: string;
@@ -70,7 +86,7 @@ export class Framework {
     this.registerWindow();
   }
 
-  async sendMessage(message: any) {
+  async sendMessage<T>(message: MessageData): Promise<T> {
     const deferred = defer<any>();
     const id = nextMessageId();
     this.callbacks[id] = (err, result) => {
@@ -80,17 +96,15 @@ export class Framework {
         deferred.resolve(result);
       }
     };
-    this.parent.postMessage(
-      { ...message, id, type },
-      { targetOrigin: this.targetOrigin }
-    );
+    const data: PostMessageData = { ...message, id, type };
+    this.parent.postMessage(data, { targetOrigin: this.targetOrigin });
     return tap(timeout(deferred.promise, 1000), () => {
       delete this.callbacks[id];
       // console.log(this.callbacks);
     });
   }
 
-  private onMessage({ data }: MessageEvent) {
+  private onMessage({ data }: MessageEvent<PostMessageResult>) {
     // console.log("page1 received:", data);
     const { id, result, error } = data;
     if (id) {
@@ -107,7 +121,7 @@ export class Framework {
 
   async registerWindow() {
     try {
-      const id = await this.sendMessage({ command: "registerWindow" });
+      const id = await this.sendMessage<string>({ command: "registerWindow" });
       this.windowId = id;
       console.log("registered window: " + id);
     } catch (err) {
@@ -129,7 +143,7 @@ export class Framework {
 
   async listWindows() {
     try {
-      return await this.sendMessage({ command: "listWindows" });
+      return await this.sendMessage<string[]>({ command: "listWindows" });
     } catch (err) {
       console.error("list windows failed.\n%O", err);
       throw err;
