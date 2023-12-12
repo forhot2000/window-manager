@@ -19,7 +19,7 @@
     "http-proxy": "^1.18.1",
     "rimraf": "^5.0.5",
     "typescript": "^5.2.2",
-    "vite": "^5.0.7",
+    "vite": "^4.5.1",
     "window-manager": "workspace:^"
   }
 }
