@@ -65,9 +65,9 @@ interface PostMessageResult {
 }
 
 export class Framework {
-  parent!: Window;
-  targetOrigin?: string;
-  windowId!: string;
+  private parentWindow!: Window;
+  private targetOrigin?: string;
+  private windowId!: string;
   private callbacks!: { [k: string]: (err: any, result: any) => void };
 
   constructor(opts?: { targetOrigin?: string }) {
@@ -78,7 +78,7 @@ export class Framework {
     }
 
     opts = opts || {};
-    this.parent = parent;
+    this.parentWindow = parent;
     this.targetOrigin = opts.targetOrigin;
     this.callbacks = {};
     this.windowId = "";
@@ -86,7 +86,14 @@ export class Framework {
     this.registerWindow();
   }
 
-  async sendMessage<T>(message: MessageData): Promise<T> {
+  async sendMessage<T>(
+    message: MessageData,
+    opts?: { checkRegistered?: boolean }
+  ): Promise<T> {
+    const { checkRegistered = true } = opts || {};
+    if (checkRegistered && !this.windowId) {
+      throw new Error("window not registered!");
+    }
     const deferred = defer<any>();
     const id = nextMessageId();
     this.callbacks[id] = (err, result) => {
@@ -97,7 +104,7 @@ export class Framework {
       }
     };
     const data: PostMessageData = { ...message, id, type };
-    this.parent.postMessage(data, { targetOrigin: this.targetOrigin });
+    this.parentWindow.postMessage(data, { targetOrigin: this.targetOrigin });
     return tap(timeout(deferred.promise, 1000), () => {
       delete this.callbacks[id];
       // console.log(this.callbacks);
@@ -119,9 +126,12 @@ export class Framework {
     }
   }
 
-  async registerWindow() {
+  private async registerWindow() {
     try {
-      const id = await this.sendMessage<string>({ command: "registerWindow" });
+      const id = await this.sendMessage<string>(
+        { command: "registerWindow" },
+        { checkRegistered: false }
+      );
       this.windowId = id;
       console.log("registered window: " + id);
     } catch (err) {
