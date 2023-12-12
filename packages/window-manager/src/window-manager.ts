@@ -1,14 +1,6 @@
-import { Bridge } from "./bridge";
-import { HandlerOpts } from "./handler.interfaces";
-import {
-  clamp,
-  createElement,
-  findFrame,
-  hasClass,
-  isLinkElement,
-} from "./util";
-import { Window } from "./window";
-import { HTMLWindow } from "./window.interfaces";
+import { Bridge, HandlerOpts } from "./bridge";
+
+type HTMLWindow = globalThis.Window;
 
 export class WindowManager {
   private windows: Map<string, Window>;
@@ -284,4 +276,97 @@ export class WindowManager {
   registerHandlers(handlers: HandlerOpts) {
     this.bridge.registerHandlers(handlers);
   }
+}
+
+class Window {
+  id!: string;
+  tab!: HTMLElement;
+  panel!: HTMLElement;
+  frame!: HTMLElement;
+  fixed: boolean = false;
+  state: string = "init";
+
+  constructor(opts: {
+    id: string;
+    tab: HTMLElement;
+    panel: HTMLElement;
+    frame: HTMLElement;
+    fixed?: boolean;
+    state?: string;
+  }) {
+    Object.assign(this, opts);
+  }
+
+  focus() {
+    addClass(this.tab, "active");
+    addClass(this.panel, "active");
+  }
+
+  blur() {
+    removeClass(this.tab, "active");
+    removeClass(this.panel, "active");
+  }
+
+  close() {
+    this.tab.remove();
+    this.panel.remove();
+  }
+}
+
+function hasClass(element: HTMLElement, className: string) {
+  const _className = element.className.trim();
+  if (!_className) {
+    return false;
+  }
+  const array = _className.split(" ");
+  return array.indexOf(className) >= 0;
+}
+
+function addClass(element: HTMLElement, className: string) {
+  const _className = element.className.trim();
+  if (_className) {
+    const array = _className.split(" ");
+    if (array.indexOf(className) < 0) {
+      element.className += " " + className;
+    }
+  } else {
+    element.className = className;
+  }
+}
+
+function removeClass(element: HTMLElement, className: string) {
+  const _className = element.className.trim();
+  if (_className) {
+    const array = _className.split(" ");
+    if (array.indexOf(className) >= 0) {
+      const newClassName = array.filter((c: any) => c !== className).join(" ");
+      element.className = newClassName;
+    }
+  }
+}
+
+function clamp(value: number, { min = 0, max = 1 }) {
+  return value < min ? min : value > max ? max : value;
+}
+
+function createElement(html: string) {
+  let temp = document.createElement("template");
+  html = html.trim(); // Never return a space text node as a result
+  temp.innerHTML = html;
+  return temp.content.firstChild as HTMLElement;
+}
+
+function findFrame(childWindow: HTMLWindow) {
+  let frame;
+  const frames = document.querySelectorAll("iframe");
+  for (const _frame of frames) {
+    if (_frame.contentWindow === childWindow) {
+      frame = _frame;
+    }
+  }
+  return frame;
+}
+
+function isLinkElement(target: HTMLElement): target is HTMLLinkElement {
+  return target.nodeName === "A";
 }

@@ -1,16 +1,8 @@
-import { HandlerOpts } from "./handler.interfaces";
+export type Handler = (args: any, source: MessageEventSource) => void;
 
-interface MessageData {
-  type: string;
-  id: string;
-  command: string;
-  args: any;
-}
-
-function isMessageData(data: any): data is MessageData {
-  const { type, id, command } = data;
-  return type && id && command;
-}
+export type HandlerOpts = {
+  [k: string]: Handler;
+};
 
 export class Bridge {
   private type: string;
@@ -49,4 +41,16 @@ export class Bridge {
       source!.postMessage({ id, error: err.message }, { targetOrigin: origin });
     }
   }
+}
+
+interface MessageData {
+  type: string;
+  id: string;
+  command: string;
+  args: any;
+}
+
+function isMessageData(data: any): data is MessageData {
+  const { type, id, command } = data;
+  return type && id && command;
 }
