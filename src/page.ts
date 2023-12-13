@@ -4,6 +4,16 @@ const framework = new Framework({
   targetOrigin: "*",
 });
 
+const txt_origin = document.getElementById("txt_origin");
+if (txt_origin) {
+  try {
+    // throw error if cross-domain
+    parent.origin;
+  } catch (err) {
+    txt_origin.innerText = origin;
+  }
+}
+
 const btn_send = document.getElementById("btn_send");
 if (btn_send) {
   btn_send.addEventListener("click", async function () {
