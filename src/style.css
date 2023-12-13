@@ -55,6 +55,11 @@ body {
   user-select: none;
 }
 
+.fixed .close {
+  /* visibility: hidden; */
+  display: none;
+}
+
 .window-panel-container {
   position: relative;
   flex: 1;

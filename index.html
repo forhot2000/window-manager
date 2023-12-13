@@ -12,13 +12,10 @@
         <li><a href="/page1.html" data-tab="tab1">page 1</a></li>
         <li><a href="/page2.html" data-tab="tab2">page 2</a></li>
         <li>
-          <a
-            href="/page3.html"
-            data-href="http://localhost:3001/page3.html"
-            data-tab="tab3"
-            data-title="page 3"
-            >page 3 (External)</a
-          >
+          <a href="http://localhost:3001/page3.html" data-tab="tab3">page 3</a>
+        </li>
+        <li>
+          <a href="/test.html">normal link</a>
         </li>
       </ul>
     </div>
@@ -26,25 +23,7 @@
     <div class="window-container">
       <div class="window-container-top">
         <!-- tabs begin -->
-        <div class="window-tab-container">
-          <div
-            class="window-tab active"
-            data-tab="tab1"
-            data-role="window-tab"
-            data-fixed="true"
-          >
-            <span>page 1</span>
-            <!-- <span class="close" title="close this window">X</span> -->
-          </div>
-          <div class="window-tab" data-tab="tab2" data-role="window-tab">
-            <span>page 2</span>
-            <span class="close" title="close this window">X</span>
-          </div>
-          <div class="window-tab" data-tab="tab3" data-role="window-tab">
-            <span>page 3</span>
-            <span class="close" title="close this window">X</span>
-          </div>
-        </div>
+        <div class="window-tab-container"></div>
         <!-- tabs end -->
 
         <!-- close all windows -->
@@ -56,25 +35,10 @@
       </div>
 
       <!-- windows begin -->
-      <div class="window-panel-container">
-        <div id="tab1" class="window-panel active" data-role="window-panel">
-          <iframe src="/page1.html" frameborder="0"></iframe>
-        </div>
-        <div id="tab2" class="window-panel" data-role="window-panel">
-          <iframe src="/page2.html" frameborder="0"></iframe>
-        </div>
-        <div id="tab3" class="window-panel" data-role="window-panel">
-          <iframe
-            src="/page3.html"
-            data-src="http://localhost:3001/page3.html"
-            frameborder="0"
-          ></iframe>
-        </div>
-      </div>
+      <div class="window-panel-container"></div>
       <!-- windows end -->
     </div>
 
-    <script type="module" src="/src/replace-origins.ts"></script>
     <script type="module" src="/src/main.ts"></script>
   </body>
 </html>
