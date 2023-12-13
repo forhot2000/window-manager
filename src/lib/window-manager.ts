@@ -614,9 +614,9 @@ function dragHandler(target: HTMLElement, events: DragEventHandlers) {
     downX = e.clientX;
     downY = e.clientY;
     target.addEventListener("mouseup", handleMouseUp);
-    target.addEventListener("mousemove", handleMouseMoveStart);
     originTarget = e.target as HTMLElement;
-    // delay to start drag, in order to handle click event
+    // delay to start drag, in order to handle click event,
+    // tab will animate move to mouse position after start drag
     startDragTimeout = setTimeout(startDrag, 200);
   });
 
@@ -628,7 +628,6 @@ function dragHandler(target: HTMLElement, events: DragEventHandlers) {
     );
     document.body.appendChild(dragMask);
     target.removeEventListener("mouseup", handleMouseUp);
-    target.removeEventListener("mousemove", handleMouseMoveStart);
     window.addEventListener("mousemove", handleMouseMove);
     window.addEventListener("mouseup", handleMouseUp);
     const e = { target, clientX: downX, clientY: downY };
@@ -641,13 +640,6 @@ function dragHandler(target: HTMLElement, events: DragEventHandlers) {
     window.removeEventListener("mousemove", handleMouseMove);
     window.removeEventListener("mouseup", handleMouseUp);
     dragEnd?.(e);
-  }
-
-  function handleMouseMoveStart(e: MouseEvent) {
-    if (e.movementX > 10) {
-      clearTimeout(startDragTimeout);
-      startDrag();
-    }
   }
 
   function handleMouseMove(e: MouseEvent) {
