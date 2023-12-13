@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.html",
   "scripts": {
-    "start": "ts-node server/index.ts",
+    "start": "ts-node server/index.js",
     "build": "vite build",
     "preview": "vite preview",
     "clear": "rimraf dist"

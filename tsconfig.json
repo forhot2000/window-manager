@@ -11,8 +11,9 @@
     "sourceMap": true,
     "allowJs": true,
     "lib": ["es6", "dom"],
+    "rootDir": "src",
     "moduleResolution": "node"
   },
-  "include": ["src/**/*.ts", "server/**/*.ts"],
+  "include": ["src/**/*.ts"],
   "exclude": ["node_modules", "dist"]
 }

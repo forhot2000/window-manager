@@ -1,4 +1,4 @@
-import express, { RequestHandler } from "express";
+import express from "express";
 import httpProxy from "http-proxy";
 import { createServer as createViteServer } from "vite";
 
@@ -17,10 +17,10 @@ function createProxy() {
     .listen(3001);
 }
 
-function slowRequest(handler: RequestHandler, delay: number): RequestHandler {
-  return (req, res, next) => {
+function slowRequest(handler, delay) {
+  return (req, res) => {
     setTimeout(() => {
-      handler(req, res, next);
+      handler(req, res);
     }, delay);
   };
 }
