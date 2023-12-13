@@ -362,9 +362,9 @@ export class WindowManager {
 
   closeAllWindows() {
     const windows = this.listWindows();
-    for (const _window of windows) {
+    for (const id of windows) {
       try {
-        this.closeWindow(_window);
+        this.closeWindow(id);
       } catch (err) {}
     }
   }
@@ -496,11 +496,13 @@ class WindowCollection {
   }
 
   values() {
-    return this.windows;
+    // return clone copy
+    return Array.from(this.windows);
   }
 
   keys() {
-    return this.ids;
+    // return clone copy
+    return Array.from(this.ids);
   }
 
   delete(id: string) {
