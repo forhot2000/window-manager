@@ -99,93 +99,223 @@ export class WindowManager {
 
   private tabDragHandler(_window: Window) {
     const { tab } = _window;
+    const parent = this.tabContainer;
+
+    type Animation = {
+      from: number;
+      to: number;
+      value: number;
+      moving: boolean;
+    };
+
+    type AnimationTab = {
+      element: HTMLElement;
+      offsetLeft: number;
+      offsetWidth: number;
+      animation: Animation;
+    };
+
+    let animationExecuting = false;
+    let animationTabs: AnimationTab[] = [];
+    let animation: Animation = {
+      from: 0,
+      to: 0,
+      value: 0,
+      moving: false,
+    };
+    let animationTimer: number;
 
     let dragStartX = 0;
     let dragStartY = 0;
     let xMin = 0;
     let xMax = 0;
     let moveTo = 0;
-    let hole: HTMLElement;
-    let floatLayer: HTMLElement;
+    let holder: HTMLElement;
 
-    const dragStart: DragStartEventHandler = (e) => {
-      const x = tab.offsetLeft;
-      const y = tab.offsetTop;
-      const w = tab.offsetWidth;
-      const h = tab.offsetHeight;
-      dragStartX = e.clientX - x;
-      dragStartY = e.clientY - y;
-      xMin = this.tabContainer.offsetLeft;
-      xMax =
-        this.tabContainer.offsetLeft +
-        this.tabContainer.offsetWidth -
-        tab.offsetWidth;
+    const speed = 10;
 
-      // save tab index
-      moveTo = Array.from(this.tabContainer.children).indexOf(tab);
+    function animationStep(timestamp: number) {
+      let hasAnimation = false;
 
-      // insert hole
-      hole = createElement(
-        `<div style="display: inline-block; width: ${w}px; height: ${h}px;"></div>`
-      );
-      this.tabContainer.insertBefore(hole, tab);
-
-      // create float layer
-      // width +1 to prevent line wrap
-      floatLayer = createElement(
-        `<div style="position: absolute; top: ${y}px; left: ${x}px; width: ${
-          w + 1
-        }px; height: ${h}px; z-index: 1000; overflow: visible;}"></div>`
-      );
-      document.body.appendChild(floatLayer);
-
-      // move tab to float layer
-      floatLayer.appendChild(tab);
-    };
-
-    const dragMove: MouseEventHandler = (e) => {
-      // move flat layer follow mouse
-      floatLayer.style.left = `${clamp(e.clientX - dragStartX, {
-        min: xMin,
-        max: xMax,
-      })}px`;
-
-      const tabs = Array.from(this.tabContainer.children);
-
-      // compute next index
-      let next = 0;
-      for (let i = 0; i < tabs.length; i++) {
-        const tab_i = tabs[i] as HTMLElement;
-        const x_i = tab_i.offsetLeft;
-        const w_i = tab_i.offsetWidth;
-        if (i === moveTo) {
-          if (e.clientX >= x_i && e.clientX <= x_i + w_i) {
-            next = i;
-            break;
+      for (let i = 0; i < animationTabs.length; i++) {
+        const at = animationTabs[i];
+        const { element: tab_i, animation: a } = at;
+        if (a.moving) {
+          hasAnimation = true;
+          const dir = a.to - a.from < 0 ? -1 : 1;
+          a.value += speed * dir;
+          if (dir > 0) {
+            if (a.value > a.to) {
+              a.value = a.to;
+              a.moving = false;
+            }
+          } else {
+            if (a.value < a.to) {
+              a.value = a.to;
+              a.moving = false;
+            }
           }
-        } else {
-          const xMid = x_i + w_i / 2;
-          if (e.clientX < xMid) {
-            break;
-          }
-          next = i + 1;
-          if (i > moveTo) {
-            // exclude hold
-            next -= 1;
-          }
+          tab_i.style.setProperty("left", `${a.value - at.offsetLeft}px`);
         }
       }
 
+      if (animation.moving) {
+        hasAnimation = true;
+        const dir = animation.to - animation.from < 0 ? -1 : 1;
+        animation.value += speed * dir;
+        if (dir > 0) {
+          if (animation.value > animation.to) {
+            animation.value = animation.to;
+            animation.moving = false;
+          }
+        } else {
+          if (animation.value < animation.to) {
+            animation.value = animation.to;
+            animation.moving = false;
+          }
+        }
+        tab.style.setProperty("left", `${animation.value}px`);
+      }
+
+      if (animationExecuting || hasAnimation) {
+        animationTimer = requestAnimationFrame(animationStep);
+      } else {
+        animationEnd();
+      }
+    }
+
+    function animationStart() {
+      animationExecuting = true;
+
+      for (let i = 0; i < animationTabs.length; i++) {
+        const at = animationTabs[i];
+        const { element: tab_i, animation: a } = at;
+        tab_i.style.setProperty("position", "relative");
+        tab_i.style.setProperty("left", `${a.to - at.offsetLeft}px`);
+      }
+
+      // set tab absolute
+      tab.style.setProperty("position", "absolute");
+      tab.style.setProperty("z-index", "1000");
+      tab.style.setProperty("left", `${animation.value}px`);
+
+      // add holder to keep tab container size
+      const { offsetWidth: w, offsetHeight: h } = tab;
+      holder = createElement(
+        `<div style="display: inline-block; width: ${w}px; height: ${h}px;"></div>`
+      );
+      parent.appendChild(holder);
+
+      animationTimer = requestAnimationFrame(animationStep);
+    }
+
+    function animationEnd() {
+      for (let i = 0; i < animationTabs.length; i++) {
+        const tab_i = animationTabs[i];
+        tab_i.element.style.removeProperty("position");
+        tab_i.element.style.removeProperty("left");
+      }
+
+      parent.insertBefore(tab, animationTabs[moveTo]?.element);
+      tab.style.removeProperty("position");
+      tab.style.removeProperty("left");
+      tab.style.removeProperty("z-index");
+
+      holder.remove();
+    }
+
+    const dragStart: DragStartEventHandler = (e) => {
+      const {
+        offsetLeft: x,
+        offsetTop: y,
+        offsetWidth: w,
+        offsetHeight: h,
+      } = tab;
+
+      dragStartX = e.clientX - x;
+      dragStartY = e.clientY - y;
+      xMin = parent.offsetLeft;
+      xMax = parent.offsetLeft + parent.offsetWidth - tab.offsetWidth;
+
+      // save current window index
+      moveTo = this.windows.indexOfWindow(_window);
+
+      // save tabs exclude current window
+      animationTabs.splice(0, animationTabs.length);
+      for (let i = 0; i < this.windows.size(); i++) {
+        if (i !== moveTo) {
+          const _window_i = this.windows.getAt(i);
+          const tab_i = _window_i.tab;
+          const { offsetLeft, offsetWidth } = tab_i;
+          const isBefore = i < moveTo;
+          const a = {
+            from: offsetLeft,
+            to: offsetLeft,
+            value: offsetLeft,
+            moving: false,
+          };
+          const at = {
+            element: tab_i,
+            offsetLeft: isBefore ? offsetLeft : offsetLeft - w,
+            offsetWidth,
+            animation: a,
+          };
+          animationTabs.push(at);
+        }
+      }
+
+      animation.from = x;
+      animation.to = x;
+      animation.value = animation.from;
+      animation.moving = animation.to !== animation.value;
+
+      animationStart();
+    };
+
+    const dragMove: MouseEventHandler = (e) => {
+      // move tab follow mouse
+      const x = clamp(e.clientX - dragStartX, {
+        min: xMin,
+        max: xMax,
+      });
+      animation.to = x;
+      animation.moving = animation.to !== animation.value;
+
+      // compute next index
+      let next = 0;
+      for (let i = 0; i < animationTabs.length; i++) {
+        const tab_i = animationTabs[i];
+        const x_i = tab_i.animation.to;
+        const w_i = tab_i.offsetWidth;
+        const xMid = x_i + w_i / 2;
+        if (e.clientX < xMid) {
+          break;
+        }
+        next = i + 1;
+      }
+
+      const w = tab.offsetWidth;
+
       // move hole if index changed
       if (next !== moveTo) {
-        let p = next;
+        // compute animation state for changed tabs
         if (next > moveTo) {
-          // include hold
-          p += 1;
+          for (let i = moveTo; i < next; i++) {
+            const tab_i = animationTabs[i];
+            const a = tab_i.animation;
+            a.from = a.value;
+            a.to = tab_i.offsetLeft;
+            a.moving = a.from !== a.to;
+          }
+        } else {
+          for (let i = next; i < moveTo; i++) {
+            const tab_i = animationTabs[i];
+            const a = tab_i.animation;
+            a.from = a.value;
+            a.to = tab_i.offsetLeft + w;
+            a.moving = a.from !== a.to;
+          }
         }
-        const tab_p = tabs[p] as HTMLElement;
-        // TODO: add tab move animation
-        this.tabContainer.insertBefore(hole, tab_p);
 
         // save next index
         moveTo = next;
@@ -197,10 +327,18 @@ export class WindowManager {
       if (index !== moveTo) {
         this.windows.moveFrom(index, moveTo);
       }
-      // TODO: add tab move animation
-      this.tabContainer.insertBefore(tab, hole);
-      hole.remove();
-      floatLayer.remove();
+
+      if (moveTo < animationTabs.length) {
+        animation.to = animationTabs[moveTo].offsetLeft;
+        animation.moving = animation.to !== animation.value;
+      } else {
+        const last = animationTabs[animationTabs.length - 1];
+        animation.to = last.offsetLeft + last.offsetWidth;
+        animation.moving = animation.to !== animation.value;
+      }
+
+      // mark animation to end, drain all running animations
+      animationExecuting = false;
     };
 
     dragHandler(tab, { dragStart, dragMove, dragEnd });
@@ -216,6 +354,7 @@ export class WindowManager {
     if (_window.fixed) {
       throw new Error("can't close fixed window!");
     }
+    // TODO: animation
     _window.close();
     this.windows.delete(id);
     this.focusAt(clamp(index, { max: this.windows.size() - 1 }));
@@ -498,7 +637,7 @@ function dragHandler(target: HTMLElement, events: DragEventHandlers) {
   }
 
   function handleMouseMoveStart(e: MouseEvent) {
-    if (e.movementX > 3) {
+    if (e.movementX > 10) {
       clearTimeout(startDragTimeout);
       startDrag();
     }
@@ -516,6 +655,10 @@ function dragHandler(target: HTMLElement, events: DragEventHandlers) {
       endDrag(e);
     }
   }
+}
+
+function lerp(t: number, min: number, max: number) {
+  return min + (max - min) * t;
 }
 
 function hasClass(element: HTMLElement, className: string) {
