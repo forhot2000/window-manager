@@ -34,9 +34,9 @@ export class WindowManager {
     this.bridge = new Bridge({
       type: "window-manager",
       handlers: {
-        registerWindow: (_, child) => this.registerWindow(child as HTMLWindow),
-        listWindows: () => this.listWindows(),
-        closeWindow: (id) => this.closeWindow(id),
+        connect: (_, source) => this.connectWindow(source as HTMLWindow),
+        list: () => this.listWindows(),
+        close: (id) => this.closeWindow(id),
       },
     });
   }
@@ -207,7 +207,7 @@ export class WindowManager {
     // console.log(this.windows);
   }
 
-  private registerWindow(child: HTMLWindow) {
+  private connectWindow(child: HTMLWindow) {
     // console.log("register window: %s %O", id, window);
     const frame = findFrame(child)!;
     let _window = this.findWindowByFrame(frame);

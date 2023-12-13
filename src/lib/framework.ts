@@ -83,7 +83,7 @@ export class Framework {
     this.callbacks = {};
     this.windowId = "";
     window.addEventListener("message", this.onMessage.bind(this));
-    this.registerWindow();
+    this.connect();
   }
 
   async sendMessage<T>(
@@ -126,16 +126,16 @@ export class Framework {
     }
   }
 
-  private async registerWindow() {
+  private async connect() {
     try {
       const id = await this.sendMessage<string>(
-        { command: "registerWindow" },
+        { command: "connect" },
         { checkRegistered: false }
       );
       this.windowId = id;
-      console.log("registered window: " + id);
+      console.log("%s connected.", id);
     } catch (err) {
-      console.error("registered window failed.\n%O", err);
+      console.error("connect failed.\n%O", err);
     }
   }
 
@@ -145,7 +145,7 @@ export class Framework {
       return;
     }
     try {
-      await this.sendMessage({ command: "closeWindow", args: this.windowId });
+      await this.sendMessage({ command: "close", args: this.windowId });
     } catch (err) {
       console.error("close window failed.\n%O", err);
     }
@@ -153,7 +153,7 @@ export class Framework {
 
   async listWindows() {
     try {
-      return await this.sendMessage<string[]>({ command: "listWindows" });
+      return await this.sendMessage<string[]>({ command: "list" });
     } catch (err) {
       console.error("list windows failed.\n%O", err);
       throw err;
