@@ -511,6 +511,11 @@ class WindowCollection {
     this.windows.splice(index, 1);
     this.ids.splice(index, 1);
     this.map.delete(id);
+    for (let i = index; i < this.ids.length; i++) {
+      const id = this.ids[i];
+      this.map.set(id, i);
+    }
+    // console.log(this.windows, this.ids, this.map);
   }
 
   size() {
@@ -602,6 +607,7 @@ function dragHandler(target: HTMLElement, events: DragEventHandlers) {
   let dragMask: HTMLElement;
   let downX = 0;
   let downY = 0;
+  let originTarget: HTMLElement;
   let startDragTimeout: any;
 
   target.addEventListener("mousedown", (e) => {
@@ -609,6 +615,7 @@ function dragHandler(target: HTMLElement, events: DragEventHandlers) {
     downY = e.clientY;
     target.addEventListener("mouseup", handleMouseUp);
     target.addEventListener("mousemove", handleMouseMoveStart);
+    originTarget = e.target as HTMLElement;
     // delay to start drag, in order to handle click event
     startDragTimeout = setTimeout(startDrag, 200);
   });
@@ -650,7 +657,7 @@ function dragHandler(target: HTMLElement, events: DragEventHandlers) {
   function handleMouseUp(e: MouseEvent) {
     if (!dragging) {
       clearTimeout(startDragTimeout);
-      target.click();
+      originTarget.click();
     } else {
       endDrag(e);
     }
