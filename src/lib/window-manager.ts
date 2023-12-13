@@ -199,7 +199,8 @@ export class WindowManager {
       tab.style.setProperty("z-index", "1000");
       tab.style.setProperty("left", `${animation.value}px`);
 
-      // add holder to keep tab container size
+      // add holder to keep size of tab container, and move tab to position of the
+      // holder when move tab to the last
       const { offsetWidth: w, offsetHeight: h } = tab;
       holder = createElement(
         `<div style="display: inline-block; width: ${w}px; height: ${h}px;"></div>`
@@ -332,8 +333,7 @@ export class WindowManager {
         animation.to = animationTabs[moveTo].offsetLeft;
         animation.moving = animation.to !== animation.value;
       } else {
-        const last = animationTabs[animationTabs.length - 1];
-        animation.to = last.offsetLeft + last.offsetWidth;
+        animation.to = holder.offsetLeft;
         animation.moving = animation.to !== animation.value;
       }
 
