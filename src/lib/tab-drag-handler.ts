@@ -10,23 +10,23 @@ type DragEventHandlers = {
   dragEnd?: MouseEventHandler;
 };
 
-function dragHandler(target: HTMLElement, events: DragEventHandlers) {
+function dragHandler(container: HTMLElement, events: DragEventHandlers) {
   const { dragStart, dragMove, dragEnd } = events;
 
   let dragging = false;
   let dragMask: HTMLElement;
   let downX = 0;
   let downY = 0;
-  let originTarget: HTMLElement;
+  let target: HTMLElement;
   let startDragTimeout: any;
 
-  target.addEventListener("mousedown", (e) => {
+  container.addEventListener("mousedown", (e) => {
     downX = e.clientX;
     downY = e.clientY;
-    target.addEventListener("mouseup", handleMouseUp);
-    originTarget = e.target as HTMLElement;
+    container.addEventListener("mouseup", handleMouseUp);
+    target = e.target as HTMLElement;
     // delay to start drag, in order to handle click event,
-    // tab will animate move to mouse position after start drag
+    // tab will smooth move to mouse position after start drag
     startDragTimeout = setTimeout(startDrag, 200);
   });
 
@@ -37,10 +37,10 @@ function dragHandler(target: HTMLElement, events: DragEventHandlers) {
       `<div style="position: absolute; top: 0; bottom: 0; left: 0; right: 0; background-color: #00000000; z-index: 9999;"></div>`
     );
     document.body.appendChild(dragMask);
-    target.removeEventListener("mouseup", handleMouseUp);
+    container.removeEventListener("mouseup", handleMouseUp);
     window.addEventListener("mousemove", handleMouseMove);
     window.addEventListener("mouseup", handleMouseUp);
-    const e = { target: originTarget, clientX: downX, clientY: downY };
+    const e = { target, clientX: downX, clientY: downY };
     dragStart?.(e);
   }
 
@@ -59,7 +59,7 @@ function dragHandler(target: HTMLElement, events: DragEventHandlers) {
   function handleMouseUp(e: MouseEvent) {
     if (!dragging) {
       clearTimeout(startDragTimeout);
-      originTarget.click();
+      target.click();
     } else {
       endDrag(e);
     }
