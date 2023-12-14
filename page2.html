@@ -4,13 +4,21 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>page 2</title>
+    <style>
+      #output {
+        margin-top: 10px;
+        white-space: pre-wrap;
+      }
+    </style>
   </head>
   <body>
     <h2 id="page_title">page 2</h2>
     <div>
-      <button id="btn_send">send</button>
+      <button id="btn_send">list windows</button>
+      <button id="btn_clear">clear output</button>
       <button id="btn_close">close</button>
     </div>
+    <div id="output"></div>
 
     <script type="module" src="/src/page.ts"></script>
   </body>

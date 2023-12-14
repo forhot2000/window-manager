@@ -19,9 +19,9 @@ if (btn_send) {
   btn_send.addEventListener("click", async function () {
     try {
       const windows = await framework.listWindows();
-      console.log("all windows: %s", windows);
+      log.debug("all windows:", windows);
     } catch (err) {
-      console.error(err);
+      log.error(err);
     }
   });
 }
@@ -39,7 +39,42 @@ if (btn_invalid) {
     try {
       await framework.sendMessage({ command: "XXX" });
     } catch (err) {
-      console.error(err);
+      log.error(err);
     }
   });
 }
+
+const btn_clear = document.getElementById("btn_clear");
+if (btn_clear) {
+  btn_clear.addEventListener("click", async function () {
+    log.clear();
+  });
+}
+
+const output = document.getElementById("output");
+const log = {
+  debug(...args: any[]) {
+    console.log(...args);
+    if (output) {
+      const d = document.createElement("div");
+      d.innerText = `${args.join(" ")}`;
+      output.appendChild(d);
+    }
+  },
+  error(err: any) {
+    console.error(err);
+    if (output) {
+      const d = document.createElement("div");
+      d.style.setProperty("color", "rgb(212 15 15)");
+      d.innerText = `${err}`;
+      output.appendChild(d);
+    }
+  },
+  clear() {
+    console.clear();
+    if (output) {
+      const children = Array.from(output.children);
+      children.forEach((c) => c.remove());
+    }
+  },
+};
