@@ -4,13 +4,13 @@ const framework = new Framework({
   targetOrigin: "*",
 });
 
-const txt_origin = document.getElementById("txt_origin");
-if (txt_origin) {
+const page_title = document.getElementById("page_title");
+if (page_title) {
   try {
     // throw error if cross-domain
     parent.origin;
   } catch (err) {
-    txt_origin.innerText = origin;
+    page_title.innerText = `${page_title.innerText} - ${origin}`;
   }
 }
 

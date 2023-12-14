@@ -63,6 +63,7 @@ body {
 .window-panel-container {
   position: relative;
   flex: 1;
+  overflow: hidden;
 }
 
 .window-panel {
@@ -76,6 +77,11 @@ body {
 
 .window-panel.active {
   z-index: 100;
+}
+
+.window-panel iframe {
+  width: 100%;
+  height: 100%;
 }
 
 /* debug tab colors */
